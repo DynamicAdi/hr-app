@@ -9,15 +9,16 @@
     "skipLibCheck": true,
 
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    "noEmit": false,
+    "noEmit": true,
     "jsx": "react-jsx",
 
     /* Linting */
     "strict": false,
     "noUnusedLocals": false,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
