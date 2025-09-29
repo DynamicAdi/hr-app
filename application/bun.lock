@@ -9,7 +9,6 @@
         "@react-navigation/bottom-tabs": "^7.4.7",
         "@react-navigation/elements": "^2.6.4",
         "@react-navigation/native": "^7.1.17",
-        "app": ".",
         "expo": "^54.0.10",
         "expo-auth-session": "^7.0.8",
         "expo-blur": "~15.0.7",
@@ -1838,8 +1837,6 @@
     "ansi-escapes/type-fest": ["type-fest@0.21.3", "", {}, "sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w=="],
 
     "anymatch/picomatch": ["picomatch@2.3.1", "", {}, "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA=="],
-
-    "app/app": ["app@file:.", {}],
 
     "app/app": ["app@file:.", {}],
 
