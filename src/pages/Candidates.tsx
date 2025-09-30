@@ -18,8 +18,6 @@ function Candidates() {
       if (req.status === 200) {
         
         const res = req.data.applications
-        console.log(res);
-        
         setFilteredData(res)
         setData(res);
       }
@@ -33,11 +31,17 @@ function Candidates() {
       if (input) {
         const lower = input.toLowerCase();
   
-        let filteredData = data.filter(
-          (item: any) =>
-            item?.appliedBy.name?.toLowerCase().includes(lower) ||
-          item?.jobDesignation?.toLowerCase().includes(lower)
-        );
+let filteredData = data.filter(
+  (item: any) =>
+    item?.appliedBy?.name?.toLowerCase().includes(lower) ||
+    item?.job?.designation?.toLowerCase().includes(lower) ||
+    item?.userLocation?.toLowerCase().includes(lower) ||
+    item?.job?.employmentType?.toLowerCase().includes(lower) ||
+    item?.skills?.some((skill: string) =>
+      skill?.toLowerCase().includes(lower)
+    )
+);
+
         setFilteredData(filteredData);
       }
   };
@@ -54,13 +58,17 @@ function Candidates() {
       if (input) {
         const lower = input.toLowerCase();
   
-        let filteredData = data.filter(
-          (item: any) =>
-            item?.appliedBy.name?.toLowerCase().includes(lower) ||
-          item?.job.designation?.toLowerCase().includes(lower) ||
-          item?.userLocation?.toLowerCase().includes(lower) ||
-          item?.employmentType.toLowerCase().includes(lower)
-        );
+let filteredData = data.filter(
+  (item: any) =>
+    item?.appliedBy?.name?.toLowerCase().includes(lower) ||
+    item?.job?.designation?.toLowerCase().includes(lower) ||
+    item?.userLocation?.toLowerCase().includes(lower) ||
+    item?.job?.employmentType?.toLowerCase().includes(lower) ||
+    item?.skills?.some((skill: string) =>
+      skill?.toLowerCase().includes(lower)
+    )
+);
+
         setFilteredData(filteredData);
       }
     }, [input]);

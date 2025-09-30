@@ -27,8 +27,6 @@ function Job() {
       const req = await api.get("/job/get");
       if (req.status === 200) {
         const data = req.data.jobs;
-        console.log(data);
-        
         const departmentCounts = data.reduce(
           (acc: Record<string, number>, item: any) => {
             acc[item.department] = (acc[item.department] || 0) + 1;
