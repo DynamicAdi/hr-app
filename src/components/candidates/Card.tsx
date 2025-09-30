@@ -7,6 +7,15 @@ import {
 } from "lucide-react";
 import React from "react";
 
+declare global {
+  interface Window {
+    ReactNativeWebView?: {
+      postMessage: (message: string) => void;
+    };
+  }
+}
+
+
 function Card({
   name,
   jobDesignation,
@@ -28,31 +37,47 @@ function Card({
   experience?: string
   eployementType?: string
 }) {
+  // const handleDownload = async () => {
+  //   try {
+  //     const response = await fetch(resumeDlLink);
+  //     const blob = await response.blob();
+  //     // Create a temporary link and trigger download
+  //     const link = document.createElement("a");
+  //     link.href = URL.createObjectURL(blob);
+  //     link.download = "file.pdf"; // the filename for download
+  //     link.click();
+
+  //     // Clean up
+  //     URL.revokeObjectURL(link.href);
+  //   } catch (err) {
+  //     console.error("Download failed", err);
+  //   }
+  // };
+
   const handleDownload = async () => {
   try {
-    // For mobile devices, directly open the link
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      // Mobile device detected - open in new tab (triggers native download)
-      window.open(resumeDlLink, '_blank');
+    // Check if running in React Native WebView
+    if (window.ReactNativeWebView) {
+      // Send message to React Native
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: 'DOWNLOAD_FILE',
+        url: resumeDlLink,
+        filename: `${name.replace(/\s+/g, '_')}_resume.pdf`
+      }));
     } else {
-      // Desktop browser - use blob download
+      // Fallback for web browsers
       const response = await fetch(resumeDlLink);
       const blob = await response.blob();
-      
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = `${name.replace(/\s+/g, '_')}_resume.pdf`;
-      document.body.appendChild(link); // Important: append to DOM
+      document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link); // Clean up DOM
-      
-      // Clean up blob URL after a delay
+      document.body.removeChild(link);
       setTimeout(() => URL.revokeObjectURL(link.href), 100);
     }
   } catch (err) {
     console.error("Download failed", err);
-    // Fallback: just open the link
-    window.open(resumeDlLink, '_blank');
   }
 };
 

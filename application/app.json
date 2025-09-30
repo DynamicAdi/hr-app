@@ -18,7 +18,10 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+       "infoPlist": {
+        "NSPhotoLibraryAddUsageDescription": "Allow app to save files to your device"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +29,11 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.voltsec.alpran"
+      "package": "com.voltsec.alpran",
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "bundler": "metro",

@@ -1,10 +1,12 @@
-import { Text, View, BackHandler, Image, KeyboardAvoidingView, Platform } from "react-native";
+import { Text, View, BackHandler, Image, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import WebView from "react-native-webview";
 import * as Network from "expo-network";
 import { useEffect, useRef, useState } from "react";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 export default function Index() {
   const [isConnected, setIsConnected]: any = useState(null);
@@ -45,6 +47,48 @@ export default function Index() {
   
   const insets = useSafeAreaInsets();
   
+  // Handle file downloads
+  const handleDownload = async (url: string, filename: string) => {
+    try {
+      Alert.alert('Downloading', 'Please wait...');
+
+      const fileUri = FileSystem.documentDirectory + filename;
+      
+      // Use downloadAsync - this is the correct method
+      const downloadResult = await FileSystem.downloadAsync(url, fileUri);
+      
+      if (downloadResult.status === 200) {
+        // Check if sharing is available
+        const canShare = await Sharing.isAvailableAsync();
+        
+        if (canShare) {
+          await Sharing.shareAsync(downloadResult.uri);
+          Alert.alert('Success', 'File downloaded successfully!');
+        } else {
+          Alert.alert('Downloaded', `File saved to: ${downloadResult.uri}`);
+        }
+      } else {
+        Alert.alert('Error', 'Failed to download file');
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      Alert.alert('Error', 'Failed to download file. Please try again.');
+    }
+  };
+  
+  // Handle messages from WebView
+  const handleWebViewMessage = (event: any) => {
+    try {
+      const data = JSON.parse(event.nativeEvent.data);
+      
+      if (data.type === 'DOWNLOAD_FILE') {
+        handleDownload(data.url, data.filename);
+      }
+    } catch (error) {
+      console.error('Message handling error:', error);
+    }
+  };
+  
   return (
     <KeyboardAvoidingView 
       style={{ flex: 1 }} 
@@ -73,6 +117,7 @@ export default function Index() {
             onNavigationStateChange={(navState) =>
               setCanGoBack(navState.canGoBack)
             }
+            onMessage={handleWebViewMessage}
             onShouldStartLoadWithRequest={(request) => {
               const url = request.url;
               const host = new URL(url).host;
@@ -87,11 +132,9 @@ export default function Index() {
               }
               return true;
             }}
-            // Additional props for better keyboard handling
             automaticallyAdjustContentInsets={false}
             keyboardDisplayRequiresUserAction={false}
             hideKeyboardAccessoryView={true}
-            // Inject JavaScript to handle focus events
             injectedJavaScript={`
               (function() {
                 function adjustForKeyboard() {
