@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 
 export default function Index() {
