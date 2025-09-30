@@ -210,7 +210,7 @@ function Rigester() {
           Welcome To Alpran HR Services
         </h1>
         <p className="text-base mt-1 text-center font-normal text-neutral-400">
-          Join thousands of professionals finding their dream careers
+         Join us Today and Find Your Dream Job
         </p>
 
         <div
