@@ -49,7 +49,7 @@ export default function UserProfile() {
         {/* Floating Edit Button */}
         <div className="flex justify-center mt-8">
           <Link to={"https://job-three-ashen.vercel.app/contact"} className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full shadow-md hover:opacity-90 active:scale-95 transition">
-            <LucideHelpingHand size={18} /> Upload Resume
+            <LucideHelpingHand size={18} /> Contact Us
           </Link>
         </div>
 

@@ -1,4 +1,4 @@
-import { Text, View, BackHandler, Image, KeyboardAvoidingView, Platform, Alert } from "react-native";
+import { Text, View, BackHandler, Image, KeyboardAvoidingView, Platform, Alert, Share } from "react-native";
 import WebView from "react-native-webview";
 import * as Network from "expo-network";
 import { useEffect, useRef, useState } from "react";
@@ -77,17 +77,44 @@ export default function Index() {
   };
   
   // Handle messages from WebView
-  const handleWebViewMessage = (event: any) => {
-    try {
-      const data = JSON.parse(event.nativeEvent.data);
-      
-      if (data.type === 'DOWNLOAD_FILE') {
-        handleDownload(data.url, data.filename);
+// Handle messages from WebView
+// Handle messages from WebView
+const handleWebViewMessage = async (event: any) => {
+  try {
+    const data = JSON.parse(event.nativeEvent.data);
+
+    if (data.type === 'DOWNLOAD_FILE') {
+      handleDownload(data.url, data.filename);
+    } 
+    else if (data.type === 'SHARE') {
+      const { url, title, text } = data.payload;
+
+      try {
+        const message = `${text ? text + '\n' : ''}${url || ''}`;
+
+        await Sharing.shareAsync(url, {
+          dialogTitle: title || 'Share',
+          mimeType: 'text/plain',
+          UTI: 'public.url', // helps iOS treat it as a link
+        }).catch(async () => {
+          await Share.share({
+            title: title || 'Share',
+            message,
+            url,
+          });
+        });
+
+      } catch (shareErr) {
+        console.error('Share error:', shareErr);
+        Alert.alert('Error', 'Unable to share this link.');
       }
-    } catch (error) {
-      console.error('Message handling error:', error);
     }
-  };
+  } catch (error) {
+    console.error('Message handling error:', error);
+  }
+};
+
+
   
   return (
     <KeyboardAvoidingView 

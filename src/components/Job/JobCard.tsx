@@ -20,7 +20,24 @@ function JobCard({id, title, Cateogery, location, annualSalary, employeeType, wo
         <div className="w-full h-2/5 rounded-lg bg-primary grid place-items-center text-3xl text-white font-bold">{title[0]}</div>
         </div>
         <div className="relative w-full">
-            <div className="w-8 h-8 absolute text-neutral-400 flex justify-center items-center -right-0 -top-1">
+            <div   onClick={() => {
+    const shareData = {
+      type: "SHARE",
+      payload: {
+        title: `Apply for ${title}`,
+        text: `Hey, Apply for ${title} using Alpran Softwares`,
+        url: `${window.location.href}/job/${id}`,
+      },
+    };
+
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(JSON.stringify(shareData));
+    } else if (navigator.share) {
+      navigator.share(shareData.payload);
+    } else {
+      alert("Sharing not supported on this device.");
+    }
+  }} className="w-8 h-8 absolute text-neutral-400 flex justify-center items-center -right-0 -top-1">
                 <LucideShare2 size={20} />
             </div>
             <h1 className='text-base font-semibold'>{title}</h1>

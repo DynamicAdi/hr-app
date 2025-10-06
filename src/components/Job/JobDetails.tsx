@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../../utils/api";
+import JobApplicationForm from "./ApplyApplication";
+import { useAuth } from "../../context/AuthContext";
 
 interface JobDetails {
   annualSalary?: { currency?: string; min?: number; max?: number };
@@ -74,9 +76,12 @@ export default function JobDetailsPage() {
     alert("Application submitted successfully!");
   };
 
+  const {user} = useAuth()
+
   if (loading) return <p className="text-center mt-10">Loading...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
   if (!job) return <p className="text-center mt-10">No job found</p>;
+
 
   return (
     <div className="p-4 max-w-md mx-auto mb-24">
@@ -201,31 +206,17 @@ export default function JobDetailsPage() {
 
       {/* Resume Missing Popup */}
       {showResumePopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/60 bg-opacity-50 z-50 px-4">
-          <div className="bg-white rounded-2xl shadow-lg p-6 max-w-sm w-full">
-            <h2 className="text-lg font-semibold mb-3">Resume Required</h2>
-            <p className="text-sm text-gray-600 mb-6">
-              No Resume has been added. Please contact admins to add your resume.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowResumePopup(false)}
-                className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  setShowResumePopup(false);
-                  window.location.href = "https://job-three-ashen.vercel.app/contact";
-                }}
-                className="px-4 py-2 rounded-lg bg-primary text-white transition"
-              >
-                Contact Us
-              </button>
-            </div>
-          </div>
-        </div>
+        <JobApplicationForm 
+        title={job.designation}
+        Close={setShowResumePopup}
+        jobId={id}
+        />
+        // <div className="fixed inset-0 flex items-center justify-center bg-black/60 bg-opacity-50 z-50 px-4">
+        //   <div className="bg-white rounded-2xl shadow-lg p-6 max-w-sm w-full">
+        //     <h2 className="text-lg font-semibold">Apply For {job.designation}</h2>
+        //     <p className="text-sm mt-0.5 text-neutral-400">Please Provide your details</p>
+        //   </div>
+        // </div>
       )}
     </div>
   );

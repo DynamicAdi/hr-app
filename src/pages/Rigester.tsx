@@ -5,9 +5,9 @@ import { useAuth } from "../context/AuthContext";
 import { api } from "../utils/api";
 import UserProfile from "../components/UserProfile";
 
-function Alert({ message, Close }: { message: string, Close: (val: boolean) => void }) {
+export function Alert({ message, Close }: { message: string, Close: (val: boolean) => void }) {
   return (
-    <div className="w-screen h-screen bg-black/30 flex justify-center items-center absolute inset-0 z-[999]">
+    <div className="w-screen min-h-screen h-auto bg-black/30 flex justify-center items-center absolute inset-0 z-[999]">
       <div className="w-5/6 h-1/4 bg-white rounded-2xl p-4 relative">
         <h1 className="text-xl font-semibold text-primary">Aplran Softwares</h1>
         <p className="text-left pt-4">{message}</p>
