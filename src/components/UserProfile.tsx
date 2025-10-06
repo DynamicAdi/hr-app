@@ -1,6 +1,7 @@
 "use client";
 import { LucideHelpingHand } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 interface User {
   email: string;
@@ -12,14 +13,9 @@ interface User {
 }
 
 export default function UserProfile() {
-  const user: User = {
-    email: "adarshpanditdev@gmail.com",
-    id: "68d962872e6d10ed9420fd63",
-    name: "Adarsh",
-    phone: "9086345112",
-    role: "user",
-  };
 
+  const {user, logout} = useAuth()
+  
   return (
     <div className="flex items-center justify-center bg-gray-100 p-4">
       {/* Floating Card */}
@@ -53,9 +49,11 @@ export default function UserProfile() {
         {/* Floating Edit Button */}
         <div className="flex justify-center mt-8">
           <Link to={"https://job-three-ashen.vercel.app/contact"} className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full shadow-md hover:opacity-90 active:scale-95 transition">
-            <LucideHelpingHand size={18} /> Contact US
+            <LucideHelpingHand size={18} /> Upload Resume
           </Link>
         </div>
+
+        <button onClick={logout} className="bg-transparent border-none text-center mt-4 w-full text-red-500">Logout</button>
       </div>
     </div>
   );

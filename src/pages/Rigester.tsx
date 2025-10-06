@@ -5,20 +5,46 @@ import { useAuth } from "../context/AuthContext";
 import { api } from "../utils/api";
 import UserProfile from "../components/UserProfile";
 
-function Login({ login, loading }: { login: any; loading: boolean }) {
+function Alert({ message, Close }: { message: string, Close: (val: boolean) => void }) {
+  return (
+    <div className="w-screen h-screen bg-black/30 flex justify-center items-center absolute inset-0 z-[999]">
+      <div className="w-5/6 h-1/4 bg-white rounded-2xl p-4 relative">
+        <h1 className="text-xl font-semibold text-primary">Aplran Softwares</h1>
+        <p className="text-left pt-4">{message}</p>
+        <button onClick={() => Close(false)} className="bg-primary text-white px-4 absolute right-4 bottom-4 py-1 rounded-lg hover:opacity-90 active:scale-95 transition">
+          OK
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Login({
+  login,
+  loading,
+  setPopUp,
+  setPopMessage,
+}: {
+  login: any;
+  loading: boolean;
+  setPopUp: (val: boolean) => void;
+  setPopMessage: (val: string) => void;
+}) {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
 
   const handleClick = async () => {
     if (!email && !pass) {
-      alert("Provide all credentials");
+      setPopUp(true);
+      setPopMessage("Provide All Credentials");
       return;
     }
     const log = await login({ email, password: pass });
-    console.log(log);
 
     if (!log.success) {
-      alert(log.message);
+      setPopUp(true);
+      setPopMessage("Something went wrong, Please Try again later");
+      return;
     }
     if (log.success) {
       window.location.reload();
@@ -56,8 +82,13 @@ function Login({ login, loading }: { login: any; loading: boolean }) {
   );
 }
 
-
-function RigesterForm() {
+function RigesterForm({
+  setPopUp,
+  setPopMessage,
+}: {
+  setPopUp: (val: boolean) => void;
+  setPopMessage: (val: string) => void;
+}) {
   const [name, fullName] = useState("");
   const [Email, fullEmail] = useState("");
   const [Phone, fullPhone] = useState("");
@@ -69,11 +100,13 @@ function RigesterForm() {
 
   const handleRigester = async () => {
     if (!name || !Email || !Phone || !Password || !ConfirmPass) {
-      alert("All fields are required");
+      setPopUp(true);
+      setPopMessage("All fields are required");
       return;
     }
     if (Password !== ConfirmPass) {
-      alert("Passwords do not match");
+      setPopUp(true);
+      setPopMessage("Passwords do not match");
       return;
     }
     try {
@@ -85,11 +118,13 @@ function RigesterForm() {
         password: Password,
       });
       if (res.status === 200) {
-        alert("OTP sent to your email");
+        setPopUp(true);
+        setPopMessage("OTP sent to your email");
         setOtpSent(true);
       }
     } catch (err: any) {
-      alert(err.response?.data?.message || "Something went wrong");
+      setPopUp(true);
+      setPopMessage("Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -97,7 +132,8 @@ function RigesterForm() {
 
   const handleVerifyOtp = async () => {
     if (!Otp) {
-      alert("Enter OTP");
+      setPopUp(true);
+      setPopMessage("Enter OTP");
       return;
     }
     try {
@@ -107,11 +143,13 @@ function RigesterForm() {
         otp: Otp,
       });
       if (res.status === 201) {
-        alert("Account Created Successfully!");
-        // window.location.reload();
+        setPopUp(true);
+        setPopMessage("Account Created Successfully, Please Login.");
+        window.location.reload();
       }
     } catch (err: any) {
-      alert(err.response?.data?.message || "Invalid OTP");
+      setPopUp(true);
+      setPopMessage("Invalid OTP");
     } finally {
       setLoading(false);
     }
@@ -156,7 +194,9 @@ function RigesterForm() {
             value={Password}
           />
 
-          <p className="ml-2 font-light py-0.5 text-sm mt-3">Confirm Password</p>
+          <p className="ml-2 font-light py-0.5 text-sm mt-3">
+            Confirm Password
+          </p>
           <Input
             placeholder="Re-Enter Password"
             type="password"
@@ -170,7 +210,7 @@ function RigesterForm() {
             onClick={handleRigester}
             disabled={loading}
           >
-            {loading ? "..." : "Register"}
+            {loading ? "Sending OTP" : "Register"}
           </button>
         </>
       ) : (
@@ -188,7 +228,7 @@ function RigesterForm() {
             onClick={handleVerifyOtp}
             disabled={loading}
           >
-            {loading ? "..." : "Verify OTP"}
+            {loading ? "Verifing..." : "Verify OTP"}
           </button>
         </>
       )}
@@ -196,46 +236,60 @@ function RigesterForm() {
   );
 }
 
-
 function Rigester() {
   const [tab, setTab] = useState(true);
-  const { user, logout, loading, login } = useAuth() as any;
+  const { user, loading, login } = useAuth() as any;
+  const [isPopUp, setPopUp] = useState(false);
+  const [popUpMsg, setPopUpMsg] = useState("");
 
   return (
-    <div className={`bg-gray-100 h-auto pb-28`}>
-      {
-        user ? <UserProfile /> : (
-      <Wrapper>
-        <h1 className="text-xl text-center font-bold">
-          Welcome To Alpran HR Services
-        </h1>
-        <p className="text-base mt-1 text-center font-normal text-neutral-400">
-         Join us Today and Find Your Dream Job
-        </p>
+    <div className={`bg-gray-100 h-auto pb-12 relative`}>
+      {isPopUp && <Alert Close={setPopUp} message={popUpMsg} />}
+      {user ? (
+        <UserProfile />
+      ) : (
+        <Wrapper>
+          <h1 className="text-xl text-center font-bold">
+            Welcome To Alpran HR Services
+          </h1>
+          <p className="text-base mt-1 text-center font-normal text-neutral-400">
+            Join us Today and Find Your Dream Job
+          </p>
 
-        <div
-          className="w-full p-2 bg-gray-200 rounded-lg flex gap-1.5 mt-6"
-          onClick={() => setTab(!tab)}
-        >
-          <button
-            className={`${
-              tab ? "bg-white text-black" : "bg-transparent text-neutral-500"
-            } transition-all duration-500 px-6 rounded-lg w-1/2 py-2`}
+          <div
+            className="w-full p-2 bg-gray-200 rounded-lg flex gap-1.5 mt-6"
+            onClick={() => setTab(!tab)}
           >
-            Login
-          </button>
-          <button
-            className={`${
-              !tab ? "bg-white text-black" : "bg-transparent text-neutral-500"
-            }  transition-all duration-500 px-6 rounded-lg w-1/2 py-2`}
-          >
-            Rigester
-          </button>
-        </div>
-        {tab ? <Login login={login} loading={loading} /> : <RigesterForm />}
-      </Wrapper>
-        )
-      }
+            <button
+              className={`${
+                tab ? "bg-white text-black" : "bg-transparent text-neutral-500"
+              } transition-all duration-500 px-6 rounded-lg w-1/2 py-2`}
+            >
+              Login
+            </button>
+            <button
+              className={`${
+                !tab ? "bg-white text-black" : "bg-transparent text-neutral-500"
+              }  transition-all duration-500 px-6 rounded-lg w-1/2 py-2`}
+            >
+              Rigester
+            </button>
+          </div>
+          {tab ? (
+            <Login
+              login={login}
+              loading={loading}
+              setPopMessage={setPopUpMsg}
+              setPopUp={setPopUp}
+            />
+          ) : (
+            <RigesterForm 
+            setPopMessage={setPopUpMsg}
+            setPopUp={setPopUp}
+            />
+          )}
+        </Wrapper>
+      )}
     </div>
   );
 }
